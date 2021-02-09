@@ -660,10 +660,10 @@ PlayerSettings:
     m_VersionCode: 1
     m_VersionName: 
   apiCompatibilityLevel: 6
-  cloudProjectId: 
+  cloudProjectId: 8b3a6aa8-5918-4daf-b99f-c97b1e658bec
   framebufferDepthMemorylessMode: 0
-  projectName: 
-  organizationId: 
+  projectName: EEOTGame
+  organizationId: proudmoore
   cloudEnabled: 0
   enableNativePlatformBackendsForNewInputSystem: 0
   disableOldInputManagerSupport: 0

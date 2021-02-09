@@ -7,13 +7,13 @@ using TMPro;
 public class InventorySystem : MonoBehaviour
 {
     
-    [SerializeField] private LayerMask layerMask;
-    [SerializeField] private int item1;
-    [SerializeField] private int item2;
-    [SerializeField] private float pickupTime = 2f;
-    [SerializeField] private RectTransform pickupImageRoot;
-    [SerializeField] private Image pickupProgressImage;
-    [SerializeField] private TextMeshProUGUI itemNameText;
+    [SerializeField] public LayerMask layerMask;
+    [SerializeField] public int item1;
+    [SerializeField] public int item2;
+    [SerializeField] public float pickupTime = 2f;
+    [SerializeField] public RectTransform pickupImageRoot;
+    [SerializeField] public Image pickupProgressImage;
+    [SerializeField] public TextMeshProUGUI itemNameText;
 
     private Item itemBeingPickUp;
     private float currentPickupTimerElapsed;

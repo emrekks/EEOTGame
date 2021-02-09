@@ -4,5 +4,8 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Scenes/Emre.unity
+    guid: 5f20e10fd40a8eb4bbd55dcd5b0af3b6
   m_configObjects: {}

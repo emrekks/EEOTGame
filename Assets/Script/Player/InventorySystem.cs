@@ -13,15 +13,16 @@ public class InventorySystem : MonoBehaviour
     [SerializeField] public float pickupTime = 2f;
     [SerializeField] public RectTransform pickupImageRoot;
     [SerializeField] public Image pickupProgressImage;
-    [SerializeField] public TextMeshProUGUI itemNameText;
+    [SerializeField] public Text itemNameText;
 
     private Item itemBeingPickUp;
     private float currentPickupTimerElapsed;
+    private Camera fpsCamera;
 
     // Start is called before the first frame update
     void Start()
     {
-        
+        fpsCamera = GetComponentInChildren<Camera>();
     }
 
     // Update is called once per frame
@@ -73,7 +74,7 @@ public class InventorySystem : MonoBehaviour
 
     private void ItemSelect()
     {
-        Ray ray = Camera.main.ViewportPointToRay(Vector3.one / 2f);
+        Ray ray = fpsCamera.ViewportPointToRay(Vector3.one / 2f);
         Debug.DrawRay(ray.origin, ray.direction * 2f, Color.red);
 
         RaycastHit hitInfo;
@@ -90,7 +91,7 @@ public class InventorySystem : MonoBehaviour
             else if (hitItem != null && hitItem != itemBeingPickUp)
             {
                 itemBeingPickUp = hitItem;
-                itemNameText.text = "Pickup" + itemBeingPickUp.gameObject.name;
+                //itemNameText.text = "Pickup" + itemBeingPickUp.gameObject.name;
             }
         }
         else

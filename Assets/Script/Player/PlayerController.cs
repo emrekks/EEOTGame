@@ -37,11 +37,13 @@ public class PlayerController : NetworkBehaviour
 
     // Update is called once per frame
     void Update()
-    {  
+    {
+        if (!isLocalPlayer) return;
         Movement();
         Grounded();
     }
 
+    [Command]
     void Movement()
     {
         
@@ -65,6 +67,7 @@ public class PlayerController : NetworkBehaviour
         controller.Move(velocity * Time.deltaTime);
     }
 
+    [Command]
     void Grounded()
     {
         isGrounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundMask);
@@ -74,6 +77,7 @@ public class PlayerController : NetworkBehaviour
         }
     }
 
+    [Command]
     void Health()
     {
         if(playerHealth <= 0)

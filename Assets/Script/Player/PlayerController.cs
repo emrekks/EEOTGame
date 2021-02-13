@@ -1,9 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Mirror;
 
 
-public class PlayerController : MonoBehaviour
+public class PlayerController : NetworkBehaviour
 {
     [Header("Player Settings")]
     public float playerSpeed = 3f;
@@ -32,14 +33,11 @@ public class PlayerController : MonoBehaviour
     {
         controller = GetComponent<CharacterController>();
         anim = GetComponent<Animator>();
-        Application.targetFrameRate = 300;
     }
 
     // Update is called once per frame
     void Update()
-    {
-        
-        
+    {  
         Movement();
         Grounded();
     }

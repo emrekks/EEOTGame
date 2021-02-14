@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Item
   - Item2
+  - Flash
   layers:
   - Default
   - TransparentFX

@@ -11,10 +11,9 @@ GameObject:
   - component: {fileID: 6258512705681342310}
   - component: {fileID: 6258512705681342311}
   - component: {fileID: 6258512705681342304}
-  - component: {fileID: 6258512705681342309}
   m_Layer: 0
   m_Name: FPS Camera
-  m_TagString: Untagged
+  m_TagString: MainCamera
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -85,20 +84,6 @@ AudioListener:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6258512705681342305}
   m_Enabled: 1
---- !u!114 &6258512705681342309
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6258512705681342305}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 68e40b651e6b95b42b5cdcd9cae51c2e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  mouseSensivity: 500
-  playerBody: {fileID: 6258512707154701003}
 --- !u!1 &6258512706244342348
 GameObject:
   m_ObjectHideFlags: 0
@@ -155,10 +140,9 @@ GameObject:
   - component: {fileID: 6258512706447844871}
   - component: {fileID: 6258512706447844864}
   - component: {fileID: 6258512706447844865}
-  - component: {fileID: 6258512706447844870}
   m_Layer: 0
   m_Name: Flashlight
-  m_TagString: Untagged
+  m_TagString: Flash
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -171,8 +155,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6258512706447844867}
   m_LocalRotation: {x: -0.7004929, y: -0, z: -0, w: 0.7136594}
-  m_LocalPosition: {x: 0.67204, y: -0.5999999, z: 1.06}
-  m_LocalScale: {x: 0.14040068, y: 0.19656096, z: 0.14040068}
+  m_LocalPosition: {x: 0.67204, y: -0.59999985, z: 1.06}
+  m_LocalScale: {x: 0.14040068, y: 0.19656093, z: 0.14040065}
   m_Children:
   - {fileID: 6258512707074630326}
   m_Father: {fileID: 6258512705681342310}
@@ -239,20 +223,6 @@ CapsuleCollider:
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0.000000059604645, y: 0, z: -0.00000008940697}
---- !u!114 &6258512706447844870
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6258512706447844867}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: edb14583069232b45853e8868cef4f33, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  flashLightDuration: 3
-  timer: 0
 --- !u!1 &6258512707074630327
 GameObject:
   m_ObjectHideFlags: 0
@@ -265,7 +235,7 @@ GameObject:
   - component: {fileID: 6258512707074630325}
   m_Layer: 0
   m_Name: Spot Light
-  m_TagString: Untagged
+  m_TagString: Flash
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -361,6 +331,7 @@ GameObject:
   - component: {fileID: 6258512707154701002}
   - component: {fileID: 2225005291975687838}
   - component: {fileID: 9099558273860957823}
+  - component: {fileID: 3836914482382102298}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -462,6 +433,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8710131001ae4ee4c9fe43975878df6d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.1
   playerSpeed: 3
   playerJumpHeight: 2
   playerHealth: 100
@@ -525,6 +498,25 @@ MonoBehaviour:
   localPositionSensitivity: 0.01
   localRotationSensitivity: 0.01
   localScaleSensitivity: 0.01
+--- !u!114 &3836914482382102298
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6258512707154701008}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 734b48bea0b204338958ee3d885e11f0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.1
+  clientAuthority: 1
+  localPositionSensitivity: 0.01
+  localRotationSensitivity: 0.01
+  localScaleSensitivity: 0.01
+  target: {fileID: 6258512705681342310}
 --- !u!1 &6764207568863362637
 GameObject:
   m_ObjectHideFlags: 0

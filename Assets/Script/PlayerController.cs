@@ -7,15 +7,16 @@ using Mirror;
 public class PlayerController : NetworkBehaviour
 {
     [Header("Player Settings")]
-    public float playerSpeed = 3f;
-    public float playerJumpHeight = 1f;
-    public int playerHealth = 100;
+    [SerializeField] private float playerSpeed = 3f;
+    [SerializeField] private float playerJumpHeight = 1f;
+    [SerializeField] private int playerHealth = 100;
 
     
     [Header("Ground Check")]
-    public Transform groundCheck;
-    public float groundDistance = 0.4f;
-    public LayerMask groundMask;
+    [SerializeField] private Transform groundCheck;
+    [SerializeField] private float groundDistance = 0.4f;
+    [SerializeField] private LayerMask groundMask;
+    [SyncVar]
     bool isGrounded;
 
     //Dead
@@ -29,21 +30,38 @@ public class PlayerController : NetworkBehaviour
     private CharacterController controller;
     private Animator anim;
 
+    //AudioListener
+    private AudioListener _AudioListener;
+
+    //Camera
+    Camera _cam;
+    private float lookSpeed = 2.0f;
+    private float lookXLimit = 90.0f;
+    float rotationX = 0;
+
     void Start()
     {
+        _AudioListener = GetComponentInChildren<AudioListener>();
+        _cam = GetComponentInChildren<Camera>();
         controller = GetComponent<CharacterController>();
         anim = GetComponent<Animator>();
+        Cursor.lockState = CursorLockMode.Locked;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (!isLocalPlayer) return;
+        if (!isLocalPlayer)
+        {
+            _cam.enabled = false;
+            _AudioListener.enabled = false;
+            return;
+        }
+        FpsCamera();
         Movement();
         Grounded();
     }
 
-    [Command]
     void Movement()
     {
         
@@ -67,7 +85,17 @@ public class PlayerController : NetworkBehaviour
         controller.Move(velocity * Time.deltaTime);
     }
 
-    [Command]
+    
+
+    void FpsCamera()
+    {
+        rotationX += -Input.GetAxis("Mouse Y") * lookSpeed;
+        rotationX = Mathf.Clamp(rotationX, -lookXLimit, lookXLimit);
+        _cam.transform.localRotation = Quaternion.Euler(rotationX, 0, 0);
+        transform.rotation *= Quaternion.Euler(0, Input.GetAxis("Mouse X") * lookSpeed, 0);
+    }
+
+
     void Grounded()
     {
         isGrounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundMask);
@@ -77,7 +105,6 @@ public class PlayerController : NetworkBehaviour
         }
     }
 
-    [Command]
     void Health()
     {
         if(playerHealth <= 0)
@@ -88,8 +115,6 @@ public class PlayerController : NetworkBehaviour
         if (playerDeath)
         {
             //anim.SetBool(death, true);
-        }
-
+        }        
     }
-
 }

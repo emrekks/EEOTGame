@@ -16,6 +16,8 @@ public class DevilEnemy : MonoBehaviour
     [SerializeField]private bool playerSelected;
 
 
+    NavMeshHit _navMeshHit;
+    private NavMeshPath _path;
 
     void Start()
     {
@@ -23,7 +25,7 @@ public class DevilEnemy : MonoBehaviour
     }
 
     
-    void Update()
+    void FixedUpdate()
     {
         NearestPlayer();
 
@@ -31,6 +33,8 @@ public class DevilEnemy : MonoBehaviour
         {
             _agent.SetDestination(_target.transform.position);
         }
+        
+        
         
     }
 
@@ -46,6 +50,12 @@ public class DevilEnemy : MonoBehaviour
                 float thisDistance = Mathf.Abs(Vector3.Distance(players[i].transform.position, transform.position));
 
                 distance[i] = thisDistance;
+                
+                
+                if (_agent.Raycast(players[i].transform.position, out _navMeshHit))
+                {
+                    continue;
+                }
 
                 if (thisDistance < minDistance)
                 {
@@ -57,6 +67,12 @@ public class DevilEnemy : MonoBehaviour
             }
             
         }
+
+    }
+
+
+    void CalcPath()
+    {
         
     }
 

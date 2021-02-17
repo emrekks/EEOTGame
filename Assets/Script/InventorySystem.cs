@@ -2,31 +2,43 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using Mirror;
 
-public class InventorySystem : MonoBehaviour
+public class InventorySystem : NetworkBehaviour
 {
     
     [SerializeField] public LayerMask layerMask;
-    [SerializeField] public int item1;
-    [SerializeField] public int item2;
     [SerializeField] public float pickupTime = 2f;
     [SerializeField] public RectTransform pickupImageRoot;
     [SerializeField] public Image pickupProgressImage;
     [SerializeField] public Text itemNameText;
 
-    private Item itemBeingPickUp;
+    [SyncVar]
+    private GameObject NetworkItemRemove;
+    
+    private GameObject itemBeingPickUp;
+    
     private float currentPickupTimerElapsed;
     private Camera fpsCamera;
+
+    private PlayerController player;
 
     // Start is called before the first frame update
     void Start()
     {
+        itemBeingPickUp = GameObject.FindGameObjectWithTag("Item");
         fpsCamera = GetComponentInChildren<Camera>();
+        player = GetComponent<PlayerController>();
     }
 
     // Update is called once per frame
     void Update()
     {
+        if (!isLocalPlayer)
+        {
+            return;
+        }
+
         ItemSelect();
 
         if (HasItemTargetted())
@@ -61,7 +73,8 @@ public class InventorySystem : MonoBehaviour
         currentPickupTimerElapsed += Time.deltaTime;
         if (currentPickupTimerElapsed >= pickupTime)
         {
-            MoveItemInventory();
+            NetworkItemRemove = itemBeingPickUp;
+            CmdMoveItemInventory(NetworkItemRemove);
         }
     }
     
@@ -89,7 +102,7 @@ public class InventorySystem : MonoBehaviour
 
             else if (hitItem != null && hitItem != itemBeingPickUp)
             {
-                itemBeingPickUp = hitItem;
+                itemBeingPickUp = hitItem.gameObject;
                 //itemNameText.text = "Pickup" + itemBeingPickUp.gameObject.name;
             }
         }
@@ -99,10 +112,12 @@ public class InventorySystem : MonoBehaviour
         }
     }
 
-    private void MoveItemInventory()
+    [Command]
+    private void CmdMoveItemInventory(GameObject _Item)
     {
-        itemBeingPickUp.gameObject.SetActive(false);
-        itemBeingPickUp = null;
+        NetworkServer.Destroy(_Item);
+        _Item = null;
+        player.itemCount += 1;
     }
 
 }

@@ -16,7 +16,6 @@ public class PlayerController : NetworkBehaviour
     [SerializeField] private Transform groundCheck;
     [SerializeField] private float groundDistance = 0.4f;
     [SerializeField] private LayerMask groundMask;
-    [SyncVar]
     bool isGrounded;
 
     //Dead
@@ -39,8 +38,18 @@ public class PlayerController : NetworkBehaviour
     private float lookXLimit = 90.0f;
     float rotationX = 0;
 
-    void Start()
+    //Flash
+    private Light Flashlight;
+    [SyncVar]
+    private bool FlashEnable = false;
+
+    //Item
+    [SyncVar]
+    public int itemCount = 0;
+
+   void Start()
     {
+        Flashlight = GetComponentInChildren<Light>();
         _AudioListener = GetComponentInChildren<AudioListener>();
         _cam = GetComponentInChildren<Camera>();
         controller = GetComponent<CharacterController>();
@@ -57,9 +66,13 @@ public class PlayerController : NetworkBehaviour
             _AudioListener.enabled = false;
             return;
         }
+
+        _cam.enabled = true;
+        _AudioListener.enabled = true;
         FpsCamera();
         Movement();
         Grounded();
+        flashLight();
     }
 
     void Movement()
@@ -102,6 +115,34 @@ public class PlayerController : NetworkBehaviour
         if (isGrounded && velocity.y < 0)
         {
             velocity.y = -2f;
+        }
+    }
+
+    void flashLight()
+    {
+        if (Input.GetKeyDown(KeyCode.Mouse0))
+        {
+            FlashEnable = !FlashEnable;
+            CmdflashLight(FlashEnable);         
+        }
+    }
+
+    [Command]
+    void CmdflashLight(bool flash)
+    {
+        ClientflashLight(flash);
+    }
+
+    [ClientRpc]
+    void ClientflashLight(bool flash)
+    {
+        if (flash == true)
+        {
+            Flashlight.enabled = true;
+        }
+        else
+        {
+            Flashlight.enabled = false;
         }
     }
 

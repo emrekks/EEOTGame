@@ -18,6 +18,12 @@ public class PlayerController : NetworkBehaviour
     [SerializeField] private LayerMask groundMask;
     bool isGrounded;
 
+    //Item
+    [SerializeField] private GameObject Medkit;
+    [SerializeField] private GameObject FlashLightGO;
+    [SerializeField] private bool TFMedkit;
+    [SerializeField] private bool TFFlash;
+
     //Dead
     bool playerDeath = false;
 
@@ -45,9 +51,12 @@ public class PlayerController : NetworkBehaviour
 
     //Item
     [SyncVar]
-    public int itemCount = 0;
+    public int medkitCount = 0;
+    [SerializeField] private GameObject medKitSpawn;
+    [SerializeField] private Transform MedkitRef;
+    GameObject medkit;
 
-   void Start()
+    void Start()
     {
         Flashlight = GetComponentInChildren<Light>();
         _AudioListener = GetComponentInChildren<AudioListener>();
@@ -73,6 +82,8 @@ public class PlayerController : NetworkBehaviour
         Movement();
         Grounded();
         flashLight();
+        TakeItemToHand();
+        DropItem();
     }
 
     void Movement()
@@ -118,6 +129,7 @@ public class PlayerController : NetworkBehaviour
         }
     }
 
+    #region Flash
     void flashLight()
     {
         if (Input.GetKeyDown(KeyCode.Mouse0))
@@ -145,6 +157,87 @@ public class PlayerController : NetworkBehaviour
             Flashlight.enabled = false;
         }
     }
+
+    #endregion
+
+    #region DropItem
+    void DropItem()
+    {
+        if(Medkit.activeInHierarchy && Input.GetKeyDown(KeyCode.G) && medkitCount > 0)
+        {
+            CmdDropItem();
+        }
+    }
+
+    [Command]
+    void CmdDropItem()
+    {
+        RpcDropItem();
+        medkit = Instantiate(medKitSpawn, MedkitRef.position, MedkitRef.rotation);
+        NetworkServer.Spawn(medkit);
+    }
+
+    [ClientRpc]
+    void RpcDropItem()
+    {
+        medkitCount -= 1;
+        
+        if(medkitCount <= 0)
+        {
+            Medkit.SetActive(false);
+            TFMedkit = false;
+        }
+    }
+
+    #endregion
+
+    #region TakeItemHand
+    void TakeItemToHand()
+    {
+        if (Input.GetKeyDown(KeyCode.Alpha1))
+        {
+            TFFlash = !TFFlash;
+            CmdTakeItemToHand("TFFlash" ,TFFlash);
+        }
+
+        if (Input.GetKeyDown(KeyCode.Alpha2) && medkitCount > 0)
+        {
+            TFMedkit = !TFMedkit;
+            CmdTakeItemToHand("TFMedkit", TFMedkit);
+        }
+    }
+
+    [Command]
+    void CmdTakeItemToHand(string name, bool on)
+    {
+        RpcTakeItemToHand(name, on);
+    }
+
+    [ClientRpc]
+    void RpcTakeItemToHand(string _name, bool _on)
+    {
+        if(_name == "TFFlash")
+        {
+            FlashLightGO.SetActive(_on);
+            if (FlashLightGO.activeInHierarchy)
+            {
+                Medkit.SetActive(false);
+            }
+        }
+
+        if (_name == "TFMedkit")
+        {
+            Medkit.SetActive(_on);
+            if (Medkit.activeInHierarchy)
+            {
+                FlashLightGO.SetActive(false);
+            }
+        }
+    }
+
+    #endregion
+
+
 
     void Health()
     {

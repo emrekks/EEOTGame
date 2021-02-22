@@ -120,8 +120,7 @@ public class InventorySystem : NetworkBehaviour
     {
         if(_Item != null)
         {
-            player.itemCount += 1;
-            return;
+            player.medkitCount += 1;
         }
         NetworkServer.Destroy(_Item); 
     }

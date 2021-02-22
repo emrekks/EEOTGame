@@ -7,6 +7,8 @@ TagManager:
   - Item
   - Item2
   - Flash
+  - Door
+  - Medkit
   layers:
   - Default
   - TransparentFX

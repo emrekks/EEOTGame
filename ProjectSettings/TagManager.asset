@@ -9,6 +9,7 @@ TagManager:
   - Flash
   - Door
   - Medkit
+  - PutItem1
   layers:
   - Default
   - TransparentFX

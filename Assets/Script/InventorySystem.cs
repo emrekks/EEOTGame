@@ -13,7 +13,6 @@ public class InventorySystem : NetworkBehaviour
     [SerializeField] public Image pickupProgressImage;
     [SerializeField] public Text itemNameText;
 
-    private bool itemtaking = false;
 
     [SyncVar]
     private GameObject NetworkItemRemove;
@@ -118,9 +117,14 @@ public class InventorySystem : NetworkBehaviour
     [Command]
     private void CmdMoveItemInventory(GameObject _Item)
     {
-        if(_Item != null)
+        if(_Item != null && _Item.tag == "Medkit")
         {
             player.medkitCount += 1;
+        }
+
+        if (_Item != null && _Item.tag == "Item")
+        {
+            player.Item1Count += 1;
         }
         NetworkServer.Destroy(_Item); 
     }

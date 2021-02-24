@@ -52,6 +52,8 @@ public class PlayerController : NetworkBehaviour
     //Item
     [SyncVar]
     public int medkitCount = 0;
+    [SyncVar]
+    public int Item1Count = 0;
     [SerializeField] private GameObject medKitSpawn;
     [SerializeField] private Transform MedkitRef;
     GameObject medkit;

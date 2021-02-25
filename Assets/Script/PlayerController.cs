@@ -77,6 +77,7 @@ public class PlayerController : NetworkBehaviour
 
         _cam.enabled = true;
         _AudioListener.enabled = true;
+        Movement();
         FpsCamera();
         Grounded();
         flashLight();
@@ -86,10 +87,10 @@ public class PlayerController : NetworkBehaviour
 
     }
 
-    private void FixedUpdate()
-    {
-        Movement();
-    }
+    //private void FixedUpdate()
+    //{
+    //    Movement();
+    //}
 
     void Movement()
     {

@@ -10,6 +10,8 @@ TagManager:
   - Door
   - Medkit
   - PutItem1
+  - PlayerCanHide
+  - PlayerCanHideTrigger
   layers:
   - Default
   - TransparentFX

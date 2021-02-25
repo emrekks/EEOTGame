@@ -8,7 +8,7 @@ public class PutItem : NetworkBehaviour
 {
     private Camera fpsCamera;
     private PlayerController player;
-    [SerializeField] public Image PickupImage;
+    [SerializeField] private Image PickupImage;
     // Start is called before the first frame update
     void Start()
     {

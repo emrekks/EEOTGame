@@ -8,7 +8,7 @@ public class PlayerController : NetworkBehaviour
 {
     [Header("Player Settings")]
     [SerializeField] private float playerSpeed = 3f;
-    [SerializeField] private float playerJumpHeight = 1f;
+    [SerializeField] private float playerJumpHeight = 5f;
     [SerializeField] private int playerHealth = 100;
 
     
@@ -27,13 +27,8 @@ public class PlayerController : NetworkBehaviour
     //Dead
     bool playerDeath = false;
 
-    //Gravity
-    private Vector3 velocity;
-    private float gravity = -9.81f;
-
     //Descriptions
-    private CharacterController controller;
-    private Animator anim;
+    private Rigidbody rb;
 
     //AudioListener
     private AudioListener _AudioListener;
@@ -49,6 +44,9 @@ public class PlayerController : NetworkBehaviour
     [SyncVar]
     private bool FlashEnable = false;
 
+    //Hide
+    public bool CanHideTrigger = false;
+
     //Item
     [SyncVar]
     public int medkitCount = 0;
@@ -63,8 +61,7 @@ public class PlayerController : NetworkBehaviour
         Flashlight = GetComponentInChildren<Light>();
         _AudioListener = GetComponentInChildren<AudioListener>();
         _cam = GetComponentInChildren<Camera>();
-        controller = GetComponent<CharacterController>();
-        anim = GetComponent<Animator>();
+        rb = GetComponent<Rigidbody>();
         Cursor.lockState = CursorLockMode.Locked;
     }
 
@@ -81,11 +78,17 @@ public class PlayerController : NetworkBehaviour
         _cam.enabled = true;
         _AudioListener.enabled = true;
         FpsCamera();
-        Movement();
         Grounded();
         flashLight();
         TakeItemToHand();
         DropItem();
+        Jump();
+
+    }
+
+    private void FixedUpdate()
+    {
+        Movement();
     }
 
     void Movement()
@@ -94,21 +97,20 @@ public class PlayerController : NetworkBehaviour
         if (!playerDeath)
         {
             //Movement
-            float horizontal = Input.GetAxisRaw("Horizontal");
-            float vertical = Input.GetAxisRaw("Vertical");
+            float horizontal = Input.GetAxisRaw("Horizontal") * playerSpeed;
+            float vertical = Input.GetAxisRaw("Vertical") * playerSpeed;
             Vector3 direction = transform.right * horizontal + transform.forward * vertical;
-            controller.Move(direction * playerSpeed * Time.deltaTime);
-
-            //Jump
-            if (Input.GetButtonDown("Jump") && isGrounded)
-            {
-                velocity.y = Mathf.Sqrt(playerJumpHeight * -2 * gravity);
-            }
+            rb.velocity = direction + new Vector3(0.0f, rb.velocity.y, 0.0f);
         }
+    }
 
-        //Gravity
-        velocity.y += gravity * Time.deltaTime;
-        controller.Move(velocity * Time.deltaTime);
+    void Jump()
+    {
+        //Jump
+        if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
+        {
+            rb.AddForce(transform.up * playerJumpHeight, ForceMode.VelocityChange);
+        }
     }
 
     
@@ -125,10 +127,6 @@ public class PlayerController : NetworkBehaviour
     void Grounded()
     {
         isGrounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundMask);
-        if (isGrounded && velocity.y < 0)
-        {
-            velocity.y = -2f;
-        }
     }
 
     #region Flash
@@ -240,6 +238,21 @@ public class PlayerController : NetworkBehaviour
     #endregion
 
 
+    private void OnTriggerStay(Collider other)
+    {
+        if (other.gameObject.tag == "PlayerCanHideTrigger")
+        {
+            CanHideTrigger = true;
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.gameObject.tag == "PlayerCanHideTrigger")
+        {
+            CanHideTrigger = false;
+        }
+    }
 
     void Health()
     {

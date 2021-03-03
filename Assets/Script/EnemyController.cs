@@ -3,8 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using Random = UnityEngine.Random;
 
-public class DevilEnemy : MonoBehaviour
+public class EnemyController : MonoBehaviour
 {
 
     private NavMeshAgent _agent; 
@@ -19,6 +20,10 @@ public class DevilEnemy : MonoBehaviour
     NavMeshHit _navMeshHit;
     private NavMeshPath _path;
 
+    public float wanderRadius;
+    public bool isWandering;
+    
+
     void Start()
     {
         _agent = GetComponent<NavMeshAgent>();
@@ -28,13 +33,22 @@ public class DevilEnemy : MonoBehaviour
     void FixedUpdate()
     {
         NearestPlayer();
+        FaceTarget();
+
 
         if (playerSelected)
         {
             _agent.SetDestination(_target.transform.position);
         }
-        
-        
+        else
+        {
+            WanderPoint();
+            
+            if (Vector3.Distance(transform.position, _agent.destination) <= 2f)
+            {
+                isWandering = false;
+            }
+        }
         
     }
 
@@ -70,9 +84,25 @@ public class DevilEnemy : MonoBehaviour
 
     }
 
-
-    void CalcPath()
+    void WanderPoint()
     {
+        if (!isWandering)
+        {
+            Vector3 rnd = Random.insideUnitSphere * wanderRadius;
+            _agent.SetDestination(rnd);
+            isWandering = true;
+        }
+        
+    }
+    
+    void FaceTarget()
+    {
+        if (playerSelected)
+        {
+            Vector3 direction = (_agent.destination - transform.position).normalized;
+            Quaternion lookRotation = Quaternion.LookRotation(new Vector3(direction.x, 0, direction.z));
+            transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 5f);
+        }
         
     }
 
@@ -81,5 +111,8 @@ public class DevilEnemy : MonoBehaviour
     {
         Gizmos.color = Color.blue;
         Gizmos.DrawWireSphere(transform.position,range);
+        
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(transform.position,wanderRadius);
     }
 }

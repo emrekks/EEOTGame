@@ -42,7 +42,7 @@ public class PlayerController : NetworkBehaviour
     //Flash
     private Light Flashlight;
     [SyncVar]
-    private bool FlashEnable = false;
+    public bool FlashEnable = false;
 
     //Hide
     public bool CanHideTrigger = false;

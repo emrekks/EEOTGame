@@ -8,20 +8,27 @@ public class HideInObject : NetworkBehaviour
 {
     private Camera fpsCamera;
     private PlayerController _player;
-    [SerializeField] private Transform HideLocation;
+    [SyncVar] private Transform HideLocation;
     [SerializeField] private Image Image;
-    private GameObject HideinObjects;
+    private GameObject[] HideinObjects;
+    [SyncVar] private bool hide = false;
+    [SyncVar] private GameObject exitPos;
     // Start is called before the first frame update
     void Start()
     {
         fpsCamera = GetComponentInChildren<Camera>();
         _player = GetComponent<PlayerController>();
-        HideinObjects = GameObject.FindGameObjectWithTag("HideCanObject");
+        HideinObjects = GameObject.FindGameObjectsWithTag("PlayerCanHide");
+        exitPos = GameObject.FindGameObjectWithTag("ExitPosition");
     }
 
     // Update is called once per frame
     void Update()
     {
+        if (!isLocalPlayer)
+        {
+            return;
+        }
         Hide();
     }
 
@@ -35,17 +42,27 @@ public class HideInObject : NetworkBehaviour
 
         if (Physics.Raycast(ray, out hitInfo, 2f))
         {
-            if (hitInfo.collider.gameObject.tag == "PlayerCanHide" && _player.CanHideTrigger == true)
+            if (hitInfo.collider.gameObject.tag == "PlayerCanHide" && _player.CanHideTrigger == true )
             {
                 Image.gameObject.SetActive(true);
                 if (Input.GetKeyDown(KeyCode.E))
                 {
-                    HideLocation = hitInfo.collider.transform;
-                    _player.transform.position = HideLocation.position;
-                    //CmdHide(HideLocation);
+                    hide = !hide;
+                    
+                    if(hide)
+                    {
+                        HideLocation = hitInfo.collider.transform;
+                        CmdHide("hidetrue", HideLocation);
+                    }
+                   
+                    if (!hide)
+                    {
+                        CmdHide("hidefalse" , HideLocation);
+                    }
                 }
             }
         }
+
         else
         {
             Image.gameObject.SetActive(false);
@@ -53,16 +70,31 @@ public class HideInObject : NetworkBehaviour
     }
 
 
-    //[Command]
-    //void CmdHide(Transform loc)
-    //{
-    //    RpcHide(loc);
-    //}
+    [Command]
+    void CmdHide(string name, Transform hideloc)
+    {
+        RpcHide(name, hideloc);
+    }
 
-    //[ClientRpc]
-    //void RpcHide(Transform hideLoc)
-    //{
-    //    Debug.Log("icerde");
-    //    player.transform.position = hideLoc.position;
-    //}
+    [ClientRpc]
+    void RpcHide(string hidename, Transform hidelocation)
+    {
+        if(hidename == "hidetrue")
+        {
+            foreach (GameObject io in HideinObjects)
+            {
+                Physics.IgnoreCollision(io.GetComponent<Collider>(), _player.GetComponent<Collider>(), true);
+                _player.transform.position = hidelocation.position;
+            }
+        }
+
+        if(hidename == "hidefalse")
+        {
+            foreach (GameObject io in HideinObjects)
+            {
+                Physics.IgnoreCollision(io.GetComponent<Collider>(), _player.GetComponent<Collider>(), false);
+                _player.transform.position = exitPos.transform.position;
+            }
+        }
+    }
 }

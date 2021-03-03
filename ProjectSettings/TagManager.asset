@@ -12,6 +12,8 @@ TagManager:
   - PutItem1
   - PlayerCanHide
   - PlayerCanHideTrigger
+  - Devil
+  - ExitPosition
   layers:
   - Default
   - TransparentFX

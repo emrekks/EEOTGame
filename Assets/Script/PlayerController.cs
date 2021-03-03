@@ -77,8 +77,8 @@ public class PlayerController : NetworkBehaviour
 
         _cam.enabled = true;
         _AudioListener.enabled = true;
-        Movement();
         FpsCamera();
+        Movement();
         Grounded();
         flashLight();
         TakeItemToHand();

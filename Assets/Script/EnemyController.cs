@@ -8,20 +8,29 @@ using Random = UnityEngine.Random;
 public class EnemyController : MonoBehaviour
 {
 
+    #region NavMeshAgent
+
     private NavMeshAgent _agent; 
     [SerializeField]private float[] distance;
     [SerializeField]private GameObject _target;
 
     public float range;
-
     [SerializeField]private bool playerSelected;
 
 
     NavMeshHit _navMeshHit;
     private NavMeshPath _path;
 
+    #endregion
+    
+
+    #region Wander
+
     public float wanderRadius;
     public bool isWandering;
+
+    #endregion
+    
     
 
     void Start()
@@ -52,6 +61,7 @@ public class EnemyController : MonoBehaviour
         
     }
 
+    //En yakın playerı buluyor
     void NearestPlayer()
     {
         float minDistance = range;
@@ -84,6 +94,7 @@ public class EnemyController : MonoBehaviour
 
     }
 
+    //Random yürüme konumu ayarlıyor
     void WanderPoint()
     {
         if (!isWandering)
@@ -95,6 +106,7 @@ public class EnemyController : MonoBehaviour
         
     }
     
+    //Yürüdüğü Konuma bakıyor(Tam ayarlı değil)
     void FaceTarget()
     {
         if (playerSelected)

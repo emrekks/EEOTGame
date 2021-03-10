@@ -30,9 +30,11 @@ public class EnemyController : MonoBehaviour
     public bool isWandering;
 
     #endregion
-    
-    
 
+
+
+    public bool playerSeen = false;
+    
     void Start()
     {
         _agent = GetComponent<NavMeshAgent>();
@@ -45,7 +47,7 @@ public class EnemyController : MonoBehaviour
         FaceTarget();
 
 
-        if (playerSelected)
+        if (playerSelected && playerSeen)
         {
             _agent.SetDestination(_target.transform.position);
         }
@@ -75,17 +77,35 @@ public class EnemyController : MonoBehaviour
 
                 distance[i] = thisDistance;
                 
-                
-                if (_agent.Raycast(players[i].transform.position, out _navMeshHit))
+
+                RaycastHit rayHit;
+
+                if (Physics.Linecast(transform.position, players[i].transform.position, out rayHit))
                 {
-                    continue;
+                    if (rayHit.collider.CompareTag("Player"))
+                    {
+                        playerSeen = true;
+                    }
+                    else
+                    {
+                        playerSeen = false;
+                    }
                 }
+                
 
                 if (thisDistance < minDistance)
                 {
                     minDistance = thisDistance;
                     _target = players[i];
-                    playerSelected = true;
+
+                    if (playerSeen)
+                    {
+                        playerSelected = true;
+                    }
+                    else
+                    {
+                        _target = null;
+                    }
                 }
                 
             }

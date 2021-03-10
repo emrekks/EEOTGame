@@ -12,6 +12,7 @@ public class HideInObject : NetworkBehaviour
     [SerializeField] private Image Image;
     private GameObject[] HideinObjects;
     [SyncVar] private bool hide = false;
+    public bool hideNoSync;
     [SyncVar] private GameObject exitPos;
     // Start is called before the first frame update
     void Start()
@@ -48,6 +49,7 @@ public class HideInObject : NetworkBehaviour
                 if (Input.GetKeyDown(KeyCode.E))
                 {
                     hide = !hide;
+                    hideNoSync = hide;
                     
                     if(hide)
                     {

@@ -10,8 +10,12 @@ public class PlayerController : NetworkBehaviour
     [SerializeField] private float playerSpeed = 3f;
     [SerializeField] private float playerJumpHeight = 5f;
     [SerializeField] private int playerHealth = 100;
+    [SerializeField] private float stamina = 100;
+    private bool run = false;
+    public bool canRun = true;
+    public float staminaTimer; 
 
-    
+
     [Header("Ground Check")]
     [SerializeField] private Transform groundCheck;
     [SerializeField] private float groundDistance = 0.4f;
@@ -84,6 +88,7 @@ public class PlayerController : NetworkBehaviour
         TakeItemToHand();
         DropItem();
         Jump();
+        Run();
 
     }
 
@@ -94,7 +99,6 @@ public class PlayerController : NetworkBehaviour
 
     void Movement()
     {
-        
         if (!playerDeath)
         {
             //Movement
@@ -102,6 +106,67 @@ public class PlayerController : NetworkBehaviour
             float vertical = Input.GetAxisRaw("Vertical") * playerSpeed;
             Vector3 direction = transform.right * horizontal + transform.forward * vertical;
             rb.velocity = direction + new Vector3(0.0f, rb.velocity.y, 0.0f);
+        }
+    }
+
+    void Run()
+    {
+        if (Input.GetKey(KeyCode.LeftShift) && stamina > 0 && canRun)
+        {
+            if(playerSpeed <= 5)
+            {
+                 playerSpeed = playerSpeed + Time.deltaTime * 2;
+
+                if (playerSpeed >= 5)
+                {
+                    playerSpeed = 5;
+                }
+            }
+            stamina = stamina - Time.deltaTime;
+            run = true;
+            staminaTimer = 0;
+        }
+
+        else
+        {
+            if (playerSpeed >= 3)
+            {
+                playerSpeed = playerSpeed - Time.deltaTime * 2;
+
+                if (playerSpeed < 3)
+                {
+                    playerSpeed = 3;
+                }
+            }
+           
+            run = false;
+          
+            if(staminaTimer <= 2)
+            {
+                staminaTimer = staminaTimer + Time.deltaTime;
+            }
+        }
+
+        if(-1 < stamina && stamina < 1)
+        {
+            playerSpeed = 1;
+        }
+        else
+        {
+            playerSpeed = 3;
+        }
+
+        if (run == false && stamina < 100 && staminaTimer >= 2)
+        {
+            stamina = stamina + Time.deltaTime;
+            if(stamina > 10)
+            {
+                canRun = true;
+            }
+            else
+            {
+                canRun = false;
+            }
         }
     }
 
